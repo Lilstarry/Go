@@ -2,7 +2,7 @@
 
 #### Run
 You can run script as `sbcl --script main.lsp`\
-Current version is also valid with Common Lisp.\
+Current version is also valid with Common Lisp.
 
 #### Not avaliable list:
 - ko rule is not avaliable now
