@@ -94,7 +94,7 @@
           (remhash stone (field board))))
   groups)
 
-;; returns operation-status and removed-groups
+;; returns removed-groups and operation-status
 (defun place-stone (board coordinates stone-color)
   (cond ((null coordinates) (values nil t))
         ((nth-value 1 (gethash coordinates (field board))) (values nil nil))
