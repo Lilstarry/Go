@@ -69,16 +69,17 @@
     new-board))
 
 (defun liberties (group board)
-  (reduce #'append
-          (loop for coordinates in (stones group)
-                collecting (let ((neighbours (remove-if-not #'valid-coordinates?
-                                                            (map 'list (lambda (f)
-                                                                         (funcall f coordinates))
-                                                                 +neighbour-modifiers+)))
-                                 (field (field board)))
-                             (loop for neighbour in neighbours
-                                   if (null (nth-value 1 (gethash neighbour field board)))
-                                   collect neighbour)))))
+  (remove-duplicates
+    (reduce #'append
+            (loop for coordinates in (stones group)
+                  collecting (let ((neighbours (remove-if-not #'valid-coordinates?
+                                                              (map 'list (lambda (f)
+                                                                           (funcall f coordinates))
+                                                                   +neighbour-modifiers+)))
+                                   (field (field board)))
+                               (loop for neighbour in neighbours
+                                     if (null (nth-value 1 (gethash neighbour field)))
+                                     collect neighbour))))))
 
 (defun join-groups (board &rest groups)
   (and (reduce #'eq (map 'list #'color groups))
@@ -207,16 +208,16 @@
            :undo)
           ((string= line "/skip")
            :skip)
-          (t (let ((terms (map 'list
-                               (lambda (term)
-                                       (multiple-value-bind (num used-chars) (parse-integer term :junk-allowed t)
-                                         (and (= used-chars (length term))
-                                              num)))
-                               (split line))))
-               (and (= (length terms) 2)
-                    (integerp (first terms))
-                    (integerp (second terms))
-                    terms))))))
+          (:else (let ((terms (map 'list
+                                   (lambda (term)
+                                     (multiple-value-bind (num used-chars) (parse-integer term :junk-allowed t)
+                                       (and (= used-chars (length term))
+                                            num)))
+                                   (split line))))
+                   (and (= (length terms) 2)
+                        (integerp (first terms))
+                        (integerp (second terms))
+                        terms))))))
 
 (defun make-move (game color coordinates)
   (with-slots (moves board) game
